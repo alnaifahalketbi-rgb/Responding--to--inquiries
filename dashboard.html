@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>صفحة متابعة الاستفسارات</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="login-page">
+
+        <div class="login-card" id="dashboardPage">
+
+           <div class="logo">
+    <img src="./Dhaid logo.png"
+         alt="شعار بلدية مدينة الذيد">
+</div>
+
+            <h1>صفحة متابعة الاستفسارات</h1>
+
+            <div class="subtitle">
+                قسم خدمة المتعاملين - إدارة الخدمات الفنية 
+            </div>
+
+            <h2>سجل استفسارات المتعاملين</h2>
+
+            <!-- بطاقات إحصائيات الاستفسارات -->
+            <div class="summary-cards">
+
+                <div class="summary-card">
+                    <h3>إجمالي الاستفسارات</h3>
+                    <span id="totalCount">0</span>
+                </div>
+
+                <div class="summary-card">
+                    <h3>لم يتم الرد</h3>
+                    <span id="pendingCount">0</span>
+                </div>
+
+                <div class="summary-card">
+                    <h3>تم الرد</h3>
+                    <span id="repliedCount">0</span>
+                </div>
+
+            </div>
+
+            <!-- خانات الاستفسارات -->
+            <div class="inquiry-tabs">
+
+                <button
+                    type="button"
+                    id="pendingTab"
+                    class="active"
+                    onclick="filterInquiries('لم يتم الرد')">
+                    لم يتم الرد
+                </button>
+
+                <button
+                    type="button"
+                    id="repliedTab"
+                    onclick="filterInquiries('تم الرد')">
+                    تم الرد
+                </button>
+
+            </div>
+
+<!-- البحث والفلترة -->
+<div class="inquiry-filters" style="margin:20px 0;">
+
+    <h3>البحث وفلترة الاستفسارات</h3>
+
+    <div style="display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+                gap:12px;">
+
+        <div>
+            <label for="filterCustomerName">اسم المتعامل</label>
+            <input type="text"
+                   id="filterCustomerName"
+                   placeholder="ابحث باسم المتعامل"
+                   oninput="displayInquiries()">
+        </div>
+
+        <div>
+            <label for="filterPhone">رقم الهاتف</label>
+            <input type="tel"
+                   id="filterPhone"
+                   placeholder="ابحث برقم الهاتف"
+                   oninput="displayInquiries()">
+        </div>
+
+        <div>
+            <label for="filterEmployee">اسم الموظف</label>
+            <input type="text"
+                   id="filterEmployee"
+                   placeholder="ابحث باسم الموظف"
+                   oninput="displayInquiries()">
+        </div>
+
+        <div>
+            <label for="filterDate">التاريخ</label>
+            <input type="date"
+                   id="filterDate"
+                   onchange="displayInquiries()">
+        </div>
+
+    </div>
+
+    <button type="button"
+            onclick="clearInquiryFilters()"
+            style="margin-top:12px;">
+        مسح الفلاتر
+    </button>
+
+</div>
+
+            <!-- جدول الاستفسارات -->
+            <div class="table-container">
+
+                <table id="inquiriesTable">
+
+                    <thead>
+                        <tr>
+                            <th>م</th>
+                            <th>اسم المتعامل</th>
+                            <th>التاريخ</th>
+                            <th>الموظف</th>
+                            <th>الحالة</th>
+                            <th>التفاصيل</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="inquiriesTableBody"></tbody>
+
+                </table>
+
+            </div>
+
+            <p id="emptyMessage">
+                لا توجد استفسارات بانتظار الرد حالياً
+            </p>
+
+            <!-- تفاصيل الاستفسار -->
+            <div id="inquiryDetails" style="display:none;">
+                
+
+                <h2>تفاصيل الاستفسار</h2>
+
+                <table>
+
+                    <tr>
+                        <th>اسم المتعامل</th>
+                        <td id="detailName"></td>
+                    </tr>
+
+                    <tr>
+                        <th>رقم الهاتف</th>
+                        <td id="detailPhone"></td>
+                    </tr>
+
+                    <tr>
+                        <th>اليوم</th>
+                        <td id="detailDay"></td>
+                    </tr>
+
+                    <tr>
+                        <th>التاريخ</th>
+                        <td id="detailDate"></td>
+                    </tr>
+
+                    <tr>
+                        <th>الوقت</th>
+                        <td id="detailTime"></td>
+                    </tr>
+
+                    <tr>
+                        <th>الموظف المستفسر منه</th>
+                        <td id="detailEmployee"></td>
+                    </tr>
+
+                    <tr>
+                        <th>الاستفسار</th>
+                        <td id="detailInquiry"></td>
+                    </tr>
+
+                </table>
+
+                <!-- الإضافة الجديدة: ملاحظات الرد -->
+                <label class="clint" for="replyNotes">
+                    ملاحظات الرد
+                </label>
+
+                <textarea
+                    id="replyNotes"
+                    rows="5"
+                    placeholder="اكتب هنا الرد الذي تم تقديمه للمتعامل"></textarea>
+
+                <!-- حالة الاستفسار -->
+                <label class="clint" for="inquiryStatus">
+                    حالة الاستفسار
+                </label>
+
+                <select id="inquiryStatus">
+
+                    <option value="لم يتم الرد">
+                        لم يتم الرد
+                    </option>
+
+                    <option value="تم الرد">
+                        تم الرد
+                    </option>
+
+                </select>
+     <button type="button" onclick="updateInquiryStatus()">
+    حفظ الحالة والملاحظات
+</button>
+
+<button type="button"
+        onclick="deleteInquiry()"
+        style="background-color:#a83232; margin-top:12px;">
+    حذف الاستفسار
+</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
